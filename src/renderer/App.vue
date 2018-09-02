@@ -29,7 +29,7 @@
         </v-list>
       </v-navigation-drawer>
       <v-toolbar flat fixed app :clipped-left="clipped" color="red darken-4">
-        <v-toolbar-side-icon>
+        <v-toolbar-side-icon @click="drawer =!drawer">
           <v-icon>widgets</v-icon>
         </v-toolbar-side-icon>
         <v-toolbar-title v-text="title"></v-toolbar-title>

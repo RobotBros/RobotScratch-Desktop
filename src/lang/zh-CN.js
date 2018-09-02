@@ -5,6 +5,15 @@ export default {
     cancel: '取消',
     confirm: '确定'
   },
+  action: {
+    send: "Send"
+  },
+  welcome: {
+    servoDebugger: "舵机调试",
+    servoSubtitle: "单个舵机的角度调试",
+    editor: "动作编辑器",
+    editorSubtitle: "可视化动作编辑器"
+  },
   designer: {
     add: '添加动作',
     save: '保存文件',

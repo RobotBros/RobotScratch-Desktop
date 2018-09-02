@@ -1,8 +1,8 @@
 <template>
   <v-container grid-list-md fluid>
     <!-- Toolbar -->
-    <v-layout row>
-      <v-flex xs12 lg3 v-for="(item, i) in cards" :key="i">
+    <v-layout wrap row>
+      <v-flex xs12 sm6 md3 v-for="(item, i) in cards" :key="i">
         <v-card class="elevation-5">
           <v-card-media
             @click="navigateTo(item)"
@@ -51,17 +51,17 @@ export default {
     return {
       cards: [
         {
-          "name": "舵机调试",
+          "name": this.$t("welcome.servoDebugger"),
           "url": "servoDebugger",
-          "brief": "单个舵机的角度调试",
+          "brief": this.$t("welcome.servoSubtitle"),
           "image": null,
           "image_text": "{ SERVO }",
           "image_text_class": "blue"
         },
         {
-          "name": "动作编辑器",
+          "name": this.$t("welcome.editor"),
           "url": "designer",
-          "brief": "可视化动作编辑器",
+          "brief": this.$t("welcome.editorSubtitle"),
           "image": null,
           "image_text": "{ EDITOR }",
           "image_text_class": "teal"

@@ -4,6 +4,10 @@
   "author": "Enix Yu <enix223@163.com>",
   "description": "Desktop version of RobotScratch",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RobotBros/RobotScratch-Desktop.git"
+  },
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -80,7 +84,7 @@
     "css-loader": "^0.28.4",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
-    "electron": "^1.7.5",
+    "electron": "^1.8.8",
     "electron-builder": "^19.19.1",
     "electron-debug": "^1.4.0",
     "electron-devtools-installer": "^2.2.0",
@@ -100,7 +104,7 @@
     "style-loader": "^0.18.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
-    "url-loader": "^0.5.9",
+    "url-loader": "^1.1.1",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^13.0.5",
     "vue-style-loader": "^3.0.1",

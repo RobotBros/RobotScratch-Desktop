@@ -17,7 +17,7 @@
             <v-btn slot="activator" icon @click="sendData">
               <v-icon>send</v-icon>
             </v-btn>
-            <span>Send</span>
+            <span>{{ $t('action.send') }}</span>
           </v-tooltip>
           
         </v-toolbar>
@@ -27,7 +27,7 @@
     <v-layout wrap row class="px-2">
       <v-flex xs3 v-for="(servo, idx) in servos" :key="idx">
         <v-card>
-          <v-card-title :class="`${servo.color} lighten-2`">
+          <v-card-title :class="`${servo.color} lighten-1`">
             <v-layout>
               <v-flex xs2>
                 <v-menu dark offset-y>
