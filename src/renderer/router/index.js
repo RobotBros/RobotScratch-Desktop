@@ -12,9 +12,14 @@ const router = new Router({
       component: require('@/renderer/components/WelcomeView').default,
     },
     {
-      path: '/inspire',
-      name: 'inspire',
-      component: require('@/renderer/components/InspireView').default,
+      path: '/servo-debugger',
+      name: 'servoDebugger',
+      component: require('@/renderer/components/ServoDebuggerView').default,
+    },
+    {
+      path: '/designer',
+      name: 'designer',
+      component: require('@/renderer/components/DesignerView').default,
     },
     {
       path: '*',
