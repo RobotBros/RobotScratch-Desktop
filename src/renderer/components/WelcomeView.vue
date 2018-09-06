@@ -2,7 +2,7 @@
   <v-container grid-list-md fluid>
     <!-- Toolbar -->
     <v-layout wrap row>
-      <v-flex xs12 sm6 md3 v-for="(item, i) in cards" :key="i">
+      <v-flex xs12 sm6 md3 xl2 v-for="(item, i) in cards" :key="i">
         <v-card class="elevation-5">
           <v-card-media
             @click="navigateTo(item)"
@@ -33,9 +33,9 @@
             @click="navigateTo(item)"
           >
             <div>
-              <div class="headline mb-2">{{ item.name }}</div>
+              <div class="headline mb-2">{{ $t(item.name) }}</div>
               <span class="grey--text">
-                {{ item.brief }}
+                {{ $t(item.brief) }}
               </span>
             </div>
           </v-card-title>
@@ -51,17 +51,17 @@ export default {
     return {
       cards: [
         {
-          "name": this.$t("welcome.servoDebugger"),
+          "name": "welcome.servoDebugger",
           "url": "servoDebugger",
-          "brief": this.$t("welcome.servoSubtitle"),
+          "brief": "welcome.servoSubtitle",
           "image": null,
           "image_text": "{ SERVO }",
           "image_text_class": "blue"
         },
         {
-          "name": this.$t("welcome.editor"),
+          "name": "welcome.editor",
           "url": "designer",
-          "brief": this.$t("welcome.editorSubtitle"),
+          "brief": "welcome.editorSubtitle",
           "image": null,
           "image_text": "{ EDITOR }",
           "image_text_class": "teal"

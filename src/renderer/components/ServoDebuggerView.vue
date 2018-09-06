@@ -68,7 +68,7 @@
             <v-text-field
               prepend-icon="rotate_right"
               append-icon="˚"
-              label="Target Degree (n˚)"
+              :label="$t('debugger.targetDegree')"
               type="number"
               solo-inverted
               v-model="servo.props.degree"
@@ -77,7 +77,7 @@
             <v-text-field
               prepend-icon="timer"
               append-icon="''"
-              label="Duration (ms)"
+              :label="$t('debugger.duration')"
               type="number"
               solo-inverted
               v-model="servo.props.duration"
@@ -253,7 +253,7 @@
         if (this.ble.connected) {
           return this.$t('designer.bleDisconnect')
         } else {
-          return this.$t('designer.scanBle')
+          return this.$t('debugger.connectRobot')
         }
       },
 
@@ -285,7 +285,7 @@
 
         let notSelected = this.servos.filter(x => !x.selected)
         if (notSelected.length === this.servos.length) {
-          this.showMessage('Please select a servo first', 'error')
+          this.showMessage(this.$t('debugger.selectServoFirst'), 'error')
           return
         }
 

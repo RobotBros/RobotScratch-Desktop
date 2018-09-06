@@ -34,6 +34,24 @@
         </v-toolbar-side-icon>
         <v-toolbar-title v-text="title"></v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-menu bottom left>
+          <v-btn
+            icon
+            slot="activator"
+          >
+            <v-icon>language</v-icon>
+          </v-btn>
+
+          <v-list>
+            <v-list-tile
+              v-for="(item, i) in rightMenus"
+              :key="i"
+              @click="item.action(item.lang)"
+            >
+              <v-list-tile-title>{{ $t(item.title) }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
         <v-btn
           icon
           @click.native.stop="rightDrawer = !rightDrawer"
@@ -43,9 +61,9 @@
       </v-toolbar>
       <v-content>
         <v-container fluid class="ma-0 pa-0">
-          <v-slide-y-transition mode="out-in">
+          <v-slide-x-transition mode="out-in">
             <router-view></router-view>
-          </v-slide-y-transition>
+          </v-slide-x-transition>
         </v-container>
       </v-content>
       <v-navigation-drawer
@@ -73,22 +91,40 @@
 </template>
 
 <script>
+  import { loadLanguageAsync } from '@/setup/i18n-setup'
+
   export default {
     name: 'RobotScratch',
-    data: () => ({
-      clipped: false,
-      drawer: true,
-      fixed: false,
-      items: [
-        { icon: 'apps', title: 'Welcome', to: '/' },
-        { icon: 'settings_remote', title: 'Inspire', to: '/servo-debugger' },
-        { icon: 'gamepad', title: 'Designer', to: '/designer' }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'RobotScratch',
-    }),
+
+    data () {
+      return {
+        clipped: false,
+        drawer: true,
+        fixed: false,
+        items: [
+          { icon: 'apps', title: 'Welcome', to: '/' },
+          { icon: 'settings_remote', title: 'Inspire', to: '/servo-debugger' },
+          { icon: 'gamepad', title: 'Designer', to: '/designer' }
+        ],
+        miniVariant: false,
+        right: true,
+        rightDrawer: false,
+        title: 'RobotScratch',
+        rightMenus: [
+          { lang: 'zh-CN', title: 'app.langZhCN', action: this.switchLang },
+          { lang: 'en-GB', title: 'app.langEN', action: this.switchLang }
+        ]
+      }
+    },
+
+    methods: {
+      switchLang (lang) {
+        loadLanguageAsync(lang)
+          .catch(err => {
+            console.error(err)
+          })
+      }
+    }
   };
 </script>
 

@@ -1,6 +1,5 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import { loadLanguageAsync } from '@/setup/i18n-setup';
+import Vue from 'vue'
+import Router from 'vue-router'
 
 Vue.use(Router);
 
@@ -26,11 +25,6 @@ const router = new Router({
       redirect: '/',
     },
   ],
-});
-
-router.beforeEach((to, from, next) => {
-  const lang = to.params.lang || 'zh-CN';
-  loadLanguageAsync(lang).then(() => next());
 })
 
-export default router;
+export default router

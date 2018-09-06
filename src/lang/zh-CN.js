@@ -6,13 +6,23 @@ export default {
     confirm: '确定'
   },
   action: {
-    send: "Send"
+    send: "发送"
+  },
+  app: {
+    langEN: '英文 en',
+    langZhCN: '简体中文 zh-CN'
   },
   welcome: {
     servoDebugger: "舵机调试",
     servoSubtitle: "单个舵机的角度调试",
     editor: "动作编辑器",
     editorSubtitle: "可视化动作编辑器"
+  },
+  debugger: {
+    selectServoFirst: "请先选择舵机",
+    targetDegree: "目标角度 (n˚)",
+    duration: "运行时间 (ms)",
+    connectRobot: "连接xRobot"
   },
   designer: {
     add: '添加动作',

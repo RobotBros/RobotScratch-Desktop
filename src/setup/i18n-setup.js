@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import messages from '@/lang/en-US'
+import messages from '@/lang/en-GB'
 import axios from 'axios'
+import { remote } from 'electron'
 
 Vue.use(VueI18n)
 
@@ -13,7 +14,9 @@ export const i18n = new VueI18n({
 })
 
 // our default language that is prelaoded
+const defaultLang = remote.app.getLocale()
 const loadedLanguages = ['en']
+loadLanguageAsync(defaultLang)
 
 export function setI18nLanguage (lang) {
   i18n.locale = lang

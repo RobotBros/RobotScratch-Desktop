@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "chart.js": "^2.7.2",
     "noble": "^1.9.1",
     "underscore": "^1.9.1",
     "vue": "^2.4.2",
@@ -88,6 +89,7 @@
     "electron-builder": "^19.19.1",
     "electron-debug": "^1.4.0",
     "electron-devtools-installer": "^2.2.0",
+    "electron-rebuild": "^1.8.2",
     "eslint": "^4.4.1",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-friendly-formatter": "^3.0.0",

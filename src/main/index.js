@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, Menu } from 'electron' // eslint-disable-line
 
 /**
  * Set `__static` path to static files in production
@@ -22,6 +22,40 @@ function createWindow() {
     useContentSize: true,
     width: 1000,
   });
+
+  // Create the Application's main menu
+  var template = [
+    {
+      label: "Application",
+      submenu: [
+        { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+      ]
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+      ]
+    },
+    {
+      label: "Developer",
+      submenu: [
+        {
+          label: "Toggle DevTools",
+          accelerator: "CmdOrCtrl+I",
+          click: (menuItem, browserWindow) => browserWindow.toggleDevTools()
+        }
+      ]
+    }
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   mainWindow.loadURL(winURL);
 
