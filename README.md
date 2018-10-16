@@ -2,6 +2,10 @@
 
 > Desktop version of RobotScratch
 
+![](https://github.com/RobotBros/RobotScratch-Desktop/blob/master/screenshot/robotscratch-screentshot-1.png)
+![](https://github.com/RobotBros/RobotScratch-Desktop/blob/master/screenshot/robotscratch-screentshot-2.png)
+![](https://github.com/RobotBros/RobotScratch-Desktop/blob/master/screenshot/robotscratch-screentshot-3.png)
+
 #### Build Setup
 
 ``` bash
