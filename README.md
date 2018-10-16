@@ -49,6 +49,6 @@ This project was generated with [electron-vue](https://github.com/SimulatedGREG/
 
 | 指令 | 说明 | DATA数据说明 |
 |---|---|---|
-| 01 | 设置不定长数据的长度 | DATA为不定长数据的长度，DATA[0] = LEN_H, DATA[1] = LEN_L。 当发送完此数据后，下位机自动进入DMA模式 | 
+| 01 | 设置不定长数据的长度 | DATA为不定长数据的长度，DATA[0] = LEN_H, DATA[1] = LEN_L。 当发送完此数据后，下位机自动进入DMA模式 | 
 | 02 | DMA传输不定长数据 | DATA 要传输的数据
-| 03 | UBT舵机控制透传 | DATA是UBT的舵机控制协议 |
+| 03 | UBT舵机控制透传 | DATA是UBT的舵机控制协议 |
