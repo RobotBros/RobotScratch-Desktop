@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import messages from '@/lang/en-GB'
+import messages from '@/lang/en-US'
 import axios from 'axios'
 import { remote } from 'electron'
 
