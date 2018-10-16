@@ -25,9 +25,9 @@ npm run lint
 ### 帧格式
 
 
-| 帧头(1B) | 协议版本 (1B) | 指令 (1B) | 长度(2B) | 数据(N *bytes) | 校验 (1B) |
-|--|--|--|--|--|--|
-| 0xFF | 0x01 | CMD | LEN_H LEN_L | DATA | CHECKSUM |
+| 帧头(1B) | 协议版本 (1B) | 指令 (1B) | 长度(2B) | 数据(N *bytes) | 校验 (1B) | 帧尾 (1B)
+|--|--|--|--|--|--|--|
+| 0xFF | 0x01 | CMD | LEN_H LEN_L | DATA | CHECKSUM | 0xFE |
 
 * LEN 指整个数据帧的长度
 * 除了帧头，其他地方不允许出现`0xFF`，否则需要转码:
