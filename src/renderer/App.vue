@@ -83,8 +83,6 @@
         </v-list>
       </v-navigation-drawer>
       <v-footer :fixed="fixed" app class="grey darken-4">
-        <!-- <v-spacer></v-spacer> -->
-        <span>&copy; RobotBros &nbsp;</span>
       </v-footer>
     </v-app>
   </div>
@@ -125,7 +123,7 @@
           })
       }
     }
-  };
+  }
 </script>
 
 <style>

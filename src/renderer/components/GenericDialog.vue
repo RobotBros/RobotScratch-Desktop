@@ -215,7 +215,7 @@ export default {
   },
   methods: {
     isFunction (functionToCheck) {
-      return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+      return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
     },
     cancelClick () {
       this.$emit('cancel', this.userInfo)
@@ -229,7 +229,7 @@ export default {
         for (let validator of this.validators) {
           if (this.isFunction(validator)) {
             let res = validator(this.payload)
-            if (typeof(res) === 'string') {
+            if (typeof (res) === 'string') {
               this.error = res
               return
             }

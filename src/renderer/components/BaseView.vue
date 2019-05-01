@@ -3,7 +3,7 @@
 export default {
   data () {
     return {
-      snackbar: {       // 弹出框
+      snackbar: { // 弹出框
         show: false,
         color: '',
         text: '',

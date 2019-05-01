@@ -43,35 +43,35 @@
       </v-flex>
     </v-layout>
     <v-layout row class="mt-1 mx-2" v-for="(servo, idx) in servos" :key="idx">
-      <v-flex xs12 style="overflow: auto;">
-        <div style="display: flex; flex: 1;">
-          <div style="display: flex; margin-right: 5px;cursor: pointer;" @click="selected = idx">
+      <v-flex xs12 style="overflow: auto">
+        <div style="display: flex; flex: 1">
+          <div style="display: flex; margin-right: 5px; cursor: pointer" @click="selected = idx">
             <v-card :class="servo.color" dark title flat style="width: 80px; text-align: center;">
               <v-card-text>
                 <span class="title servo-number">{{ servo.title }}</span>
-                <v-icon style="font-size: 1.5em;" v-if="idx === selected">edit</v-icon>
+                <v-icon style="font-size: 1.5em" v-if="idx === selected">edit</v-icon>
               </v-card-text>
             </v-card>
           </div>
-          <draggable v-model="servo.commands" style="display: flex; background-color: #666;">
-            <div style="display: flex; background-color: #666;" v-for="(action, index) in servo.commands" :key="index">
-              <div style="display: flex; flex-flow: column wrap; justify-content: space-between; margin-right: 1px;"
+          <draggable v-model="servo.commands" style="display: flex; background-color: #666">
+            <div style="display: flex; background-color: #666" v-for="(action, index) in servo.commands" :key="index">
+              <div style="display: flex; flex-flow: column wrap; justify-content: space-between; margin-right: 1px"
                 class="lighten-2"
                 :class="servo.color"
                 :style="actionWidth(action)"
               >
-                <div style="align-items: center; justify-content: center; display: flex; flex-grow: 1; cursor: pointer;"
+                <div style="align-items: center; justify-content: center; display: flex; flex-grow: 1; cursor: pointer"
                   class="lighten-1"
                   :class="servo.color"
                   @dblclick="editAction(action)"
                 >{{ index + 1}}</div>
-                <div style="align-items: center; justify-content: center; display: flex; flex-grow: 1; margin: 5px 0;">
-                  <div style="display: flex; flex-flow: column wrap;">
+                <div style="align-items: center; justify-content: center; display: flex; flex-grow: 1; margin: 5px 0">
+                  <div style="display: flex flex-flow: column wrap">
                     <div>
-                      <v-icon style="margin-right: 5px; font-size: 1.3em;">
+                      <v-icon style="margin-right: 5px; font-size: 1.3em">
                         {{ cmdIcon(action.cmd) }}
                       </v-icon>{{ cmdValue(action) }}</div>
-                    <div><v-icon style="margin-right: 5px; font-size: 1.3em;">av_timer</v-icon>
+                    <div><v-icon style="margin-right: 5px; font-size: 1.3em">av_timer</v-icon>
                       {{ action.cmd === 1 ? action.time + 'ms' : '-' }}</div>
                   </div>
                 </div>
@@ -135,7 +135,6 @@
 
 <script>
   import PeripheralPickerDialog from './BLE/PeripheralPickerDialog'
-  import SystemInformation from './WelcomeView/SystemInformation'
   import GenericDialog from './GenericDialog'
   import draggable from 'vuedraggable'
   import BaseView from './BaseView'
@@ -152,7 +151,6 @@
     extends: BaseView,
 
     components: {
-      SystemInformation,
       GenericDialog,
       PeripheralPickerDialog,
       draggable
@@ -280,8 +278,8 @@
       }
     },
     methods: {
-      open(link) {
-        this.$electron.shell.openExternal(link);
+      open (link) {
+        this.$electron.shell.openExternal(link)
       },
 
       cmdValue (item) {
@@ -319,7 +317,7 @@
 
       selectedStyle (idx) {
         if (idx === this.selected) {
-          return 'background: #eee;'
+          return 'background: #eee'
         }
 
         return ''
@@ -359,26 +357,25 @@
         let content = JSON.stringify(this.servos)
         let dialog = this.$electron.remote.dialog
         dialog.showSaveDialog((fileName) => {
-            if (fileName === undefined){
-                console.log("You didn't save the file");
-                return;
+          if (fileName === undefined) {
+            return
+          }
+
+          // fileName is a string that contains the path and filename created in the save file dialog.
+          fs.writeFile(fileName, content, (err) => {
+            if (err) {
+              alert('An error ocurred creating the file ' + err.message)
             }
 
-            // fileName is a string that contains the path and filename created in the save file dialog.  
-            fs.writeFile(fileName, content, (err) => {
-                if(err){
-                    alert("An error ocurred creating the file "+ err.message)
-                }
-
-                alert("The file has been succesfully saved");
-            });
-        }); 
+            alert('The file has been succesfully saved')
+          })
+        })
       },
 
       loadActions () {
         let dialog = this.$electron.remote.dialog
         dialog.showOpenDialog({filters: [{name: 'JSON', extensions: ['json']}], properties: ['openFile']}, (fileNames) => {
-          if(fileNames === undefined || fileNames.length !== 1){
+          if (fileNames === undefined || fileNames.length !== 1) {
             // no file selected
             return
           }
@@ -386,16 +383,16 @@
           let filepath = fileNames[0]
 
           fs.readFile(filepath, 'utf-8', (err, data) => {
-              if(err){
-                  let msg = "An error ocurred reading the file :" + err.message
-                  this.showMessage(msg, 'error')
-                  return
-              }
+            if (err) {
+              let msg = 'An error ocurred reading the file :' + err.message
+              this.showMessage(msg, 'error')
+              return
+            }
 
-              let actions = JSON.parse(data)
-              for (let idx in actions) {
-                this.servos[idx].commands = actions[idx].commands
-              }
+            let actions = JSON.parse(data)
+            for (let idx in actions) {
+              this.servos[idx].commands = actions[idx].commands
+            }
           })
         })
       },
@@ -409,28 +406,28 @@
         for (let servo of this.servos) {
           for (let action of servo.commands) {
             data.push(action.cmd)
-            
-            let time_h = (action.time & 0xFF00) >> 8
-            let time_l = action.time & 0x00FF
-            data.push(time_h)
-            data.push(time_l)
+  
+            let timeh = (action.time & 0xFF00) >> 8
+            let timel = action.time & 0x00FF
+            data.push(timeh)
+            data.push(timel)
 
-            let value_h = (action.value & 0xFF00) >> 8
-            let value_l = action.value & 0x00FF
-            data.push(value_h)
-            data.push(value_l)
+            let valueh = (action.value & 0xFF00) >> 8
+            let valuel = action.value & 0x00FF
+            data.push(valueh)
+            data.push(valuel)
             pos += 5
           }
 
-          let pos_h = (pos & 0xFF00) >> 8
-          let pos_l = pos & 0x00FF
-          indexes.push(pos_h)
-          indexes.push(pos_l)
+          let posh = (pos & 0xFF00) >> 8
+          let posl = pos & 0x00FF
+          indexes.push(posh)
+          indexes.push(posl)
         }
 
         indexes = indexes.concat(data)
         let arr = new Uint8Array(indexes)
-        
+  
         this.ui.compiling = false
         console.log('compile success')
         this.showMessage('编译成功', 'success')
@@ -486,7 +483,7 @@
           }
 
           let charac = this.ble.characteristics[0]
-          let buffer = new Buffer(this.compileBuffer.buffer)
+          let buffer = Buffer.from(this.compileBuffer.buffer)
           console.log(buffer)
           charac.write(buffer, true, (error) => {
             if (error) {
@@ -549,9 +546,9 @@
 
 <style scoped>
   .servo-icon {
-    font-size: 19px;
+    font-size: 19px
   }
   .servo-number {
-    vertical-align: middle;
+    vertical-align: middle
   }
 </style>

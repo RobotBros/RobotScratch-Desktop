@@ -11,7 +11,7 @@
                 <v-data-table
                   :headers="headers"
                   :items="items"
-                  :loading="scanning"
+                  :loading="$store.state.ble.scanning"
                   :no-data-text="message"
                   hide-actions
                 >
@@ -38,8 +38,8 @@
             flat
             @click.native="actionTap"
           >
-            <v-icon dark class="mr-1">{{ scanning ? 'stop' : 'refresh'}}</v-icon>
-            {{ scanning ? '停止扫描' : '扫描' }}
+            <v-icon dark class="mr-1">{{ $store.state.ble.scanning ? 'stop' : 'refresh'}}</v-icon>
+            {{ $store.state.ble.scanning ? '停止扫描' : '扫描' }}
           </v-btn>
           <v-btn color="red lighten-1" flat @click.native="close">
             <v-icon dark class="mr-1">close</v-icon>
@@ -51,15 +51,13 @@
 </template>
 
 <script>
-  import * as types from '@/renderer/store/types'
-  import noble from 'noble'
-  import underscore from 'underscore'
+  import * as types from '@/store/types'
 
   export default {
     props: {
       show: {
         type: Boolean,
-        default: false,
+        default: false
       },
       maxWidth: {
         type: String,
@@ -84,7 +82,7 @@
     },
 
     computed: {
-      message: function() {
+      message: function () {
         let state = this.$store.state.ble.state
         if (state === 'poweredOn') {
           return this.$t('blePicker.noPeripheralFound')
@@ -101,7 +99,7 @@
         if (newVal) {
           if (this.$store.state.ble.state === 'poweredOn') {
             // Start scan
-            this.startScan()
+            this.$store.dispatch(types.BLE_START_SCAN)
           }
         }
       }
@@ -114,43 +112,23 @@
           { text: 'MAC', align: 'left', sortable: false, value: 'mac' },
           { text: 'Name', value: 'name', sortable: false },
           { text: 'RSSI', value: 'rssi', sortable: false }
-        ],
-        scanning: false
+        ]
       }
     },
     methods: {
       close () {
-        if (this.scanning) {
-          this.stopScan()
+        if (this.$store.state.ble.scanning) {
+          this.$store.dispatch(types.BLE_STOP_SCAN)
         }
         this.$emit('close', {})
       },
 
       actionTap () {
-        if (this.scanning) {
-          this.stopScan()
+        if (this.$store.state.ble.scanning) {
+          this.$store.dispatch(types.BLE_STOP_SCAN)
         } else {
-          this.startScan()
+          this.$store.dispatch(types.BLE_START_SCAN)
         }
-      },
-
-      /**
-       * Start scan
-       */
-      startScan() {
-        console.log('Start scanning...')
-        noble.startScanning(this.uuids, true)
-        setTimeout(() => {
-          noble.stopScanning()
-        }, this.interval)
-      },
-
-      /**
-       * Stop scan
-       */
-      stopScan() {
-        console.log('Stop scan')
-        noble.stopScanning()
       },
 
       selectPeripheral (peripheral) {
@@ -159,7 +137,7 @@
 
       /**
        * Convert RSSI value to signal icon
-       * 
+       *
        * @param {Number} rssi  The signal db value
        * @returns The signal icon
        */
@@ -174,32 +152,11 @@
         } else {
           return 'signal_cellular_3_bar'
         }
-      },
-
-      setup () {
-        noble.on('stateChange', (state) => {
-          console.log(`Bluetooth manager state: ${state}`)
-          this.$store.commit(types.BLE_UPDATE_STATE, state)
-        })
-
-        noble.on('scanStart', () => {
-          this.scanning = true
-        })
-
-        noble.on('scanStop', () => {
-          this.scanning = false
-        })
-
-        noble.on('discover', (peripheral) => {
-          let index = underscore.find(this.items, x => x.id === peripheral.id)
-          if (index === undefined) {
-            this.$emit('discover', {peripheral: peripheral})
-          }
-        })
       }
     },
+
     mounted () {
-      this.setup()
+      this.$store.dispatch(types.BLE_INIT)
     }
   }
 </script>

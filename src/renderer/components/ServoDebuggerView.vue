@@ -57,6 +57,7 @@
               </v-flex>
               <v-flex xs2>
                 <v-switch
+                  class="mt-0"
                   v-model="servo.selected"
                   color="white"
                   hide-details
@@ -66,21 +67,23 @@
           </v-card-title>
           <v-card-text>
             <v-text-field
+              solo-inverted
+              hide-details
               prepend-icon="rotate_right"
               append-icon="˚"
-              :label="$t('debugger.targetDegree')"
               type="number"
-              solo-inverted
               v-model="servo.props.degree"
+              :label="$t('debugger.targetDegree')"
             />
 
             <v-text-field
+              hide-details
+              solo-inverted
               prepend-icon="timer"
               append-icon="''"
-              :label="$t('debugger.duration')"
               type="number"
-              solo-inverted
               v-model="servo.props.duration"
+              :label="$t('debugger.duration')"
             />
           </v-card-text>
         </v-card>
@@ -133,7 +136,7 @@
     ubtSetServoDegree,
     ubtLEDOff,
     ubtLEDOn
-  } from '../../utils/ubt'
+  } from '@/utils/ubt'
 
   export default {
     name: 'designer',
@@ -142,7 +145,7 @@
 
     components: {
       GenericDialog,
-      PeripheralPickerDialog,
+      PeripheralPickerDialog
     },
 
     data () {
@@ -186,8 +189,8 @@
       }
     },
     methods: {
-      open(link) {
-        this.$electron.shell.openExternal(link);
+      open (link) {
+        this.$electron.shell.openExternal(link)
       },
 
       showAddAction () {

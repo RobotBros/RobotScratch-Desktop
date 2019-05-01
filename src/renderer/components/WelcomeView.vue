@@ -51,20 +51,20 @@ export default {
     return {
       cards: [
         {
-          "name": "welcome.servoDebugger",
-          "url": "servoDebugger",
-          "brief": "welcome.servoSubtitle",
-          "image": null,
-          "image_text": "{ SERVO }",
-          "image_text_class": "blue"
+          'name': 'welcome.servoDebugger',
+          'url': 'servoDebugger',
+          'brief': 'welcome.servoSubtitle',
+          'image': null,
+          'image_text': '{ SERVO }',
+          'image_text_class': 'blue'
         },
         {
-          "name": "welcome.editor",
-          "url": "designer",
-          "brief": "welcome.editorSubtitle",
-          "image": null,
-          "image_text": "{ EDITOR }",
-          "image_text_class": "teal"
+          'name': 'welcome.editor',
+          'url': 'designer',
+          'brief': 'welcome.editorSubtitle',
+          'image': null,
+          'image_text': '{ EDITOR }',
+          'image_text_class': 'teal'
         }
       ]
     }
