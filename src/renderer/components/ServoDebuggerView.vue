@@ -4,14 +4,6 @@
     <v-layout row>
       <v-flex xs12>
         <v-toolbar color="grey darken-4" dense flat class="mb-2">
-          <!-- BLE -->
-          <v-tooltip bottom>
-            <v-btn slot="activator" icon @click="bleDidClick">
-              <v-icon>{{ bleIcon() }}</v-icon>
-            </v-btn>
-            <span>{{ bleTip() }}</span>
-          </v-tooltip>
-
           <!-- Send data -->
           <v-tooltip bottom>
             <v-btn slot="activator" icon @click="sendData">
@@ -89,54 +81,19 @@
         </v-card>
       </v-flex>
     </v-layout>
-
-    <peripheral-picker-dialog
-      :title="$t('designer.selectRobot')"
-      :show="ui.ble.show"
-      :items="ble.peripherals"
-      @close="closePeripheralDialog"
-      @discover="discover"
-    />
-
-    <v-snackbar
-      top
-      :color="snackbar.color"
-      :timeout="snackbar.timeout"
-      v-model="snackbar.show"
-    >
-      {{ snackbar.text }}
-      <v-spacer></v-spacer>
-      <v-btn flat small @click.native="snackbar.show = false">CLOSE</v-btn>
-    </v-snackbar>
-
-    <!-- Modal dialog -->
-    <template>
-      <v-layout row justify-center>
-        <v-dialog v-model="alert.show" persistent max-width="400">
-          <v-card>
-            <v-card-title class="headline">{{ alert.title }}</v-card-title>
-            <v-card-text>{{ alert.body }}</v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="red darken-1" flat @click.native="alert.callback(false)">{{ $t('constants.cancel') }}</v-btn>
-              <v-btn color="green darken-1" flat @click.native="alert.callback(true)">{{ $t('constants.confirm') }}</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-layout>
-    </template>
   </v-container>
 </template>
 
 <script>
-  import PeripheralPickerDialog from './BLE/PeripheralPickerDialog'
   import GenericDialog from './GenericDialog'
+  import * as types from '@/store/types'
   import BaseView from './BaseView'
   import {
     ubtSetServoDegree,
     ubtLEDOff,
     ubtLEDOn
   } from '@/utils/ubt'
+  import * as binutil from '@/utils/binutil'
 
   export default {
     name: 'designer',
@@ -144,25 +101,11 @@
     extends: BaseView,
 
     components: {
-      GenericDialog,
-      PeripheralPickerDialog
+      GenericDialog
     },
 
     data () {
       return {
-        ui: {
-          ble: {
-            show: false
-          }
-        },
-
-        ble: {
-          connected: false,
-          connectedPeripheral: null,
-          characteristics: [],
-          peripherals: []
-        },
-
         menus: [
           { title: 'LED ON', action: (servo) => { this.turnOnLED(servo) } },
           { title: 'LED OFF', action: (servo) => { this.turnOffLED(servo) } }
@@ -205,86 +148,11 @@
         this.genericDialog.show = false
       },
 
-      closePeripheralDialog (e) {
-        this.ui.ble.show = false
-        if (e.peripheral) {
-          this.connectPeripheral(e.peripheral)
-        }
-      },
-
-      connectPeripheral (peripheral) {
-        peripheral.connect((err) => {
-          if (err) {
-            console.error(err)
-            this.showMessage('Failed to connect peripheral', 'error')
-            this.ble.connected = false
-            this.ble.connectedPeripheral = null
-            return
-          }
-
-          peripheral.discoverAllServicesAndCharacteristics((err, services, characteristics) => {
-            if (err) {
-              console.error(err)
-              this.showMessage('Failed to connect peripheral', 'error')
-              this.ble.connected = false
-              this.ble.connectedPeripheral = null
-              this.ble.characteristics = []
-            } else {
-              this.ble.connected = true
-              this.ble.connectedPeripheral = peripheral
-              this.ble.characteristics = characteristics
-              console.log('Peripheral connected')
-            }
-          })
-        })
-      },
-
-      discover (e) {
-        let peripheral = e.peripheral
-        this.ble.peripherals.push(peripheral)
-      },
-
-      bleIcon () {
-        if (!this.ble.connected) {
-          return 'bluetooth'
-        } else {
-          return 'bluetooth_connected'
-        }
-      },
-
-      bleTip () {
-        if (this.ble.connected) {
-          return this.$t('designer.bleDisconnect')
-        } else {
-          return this.$t('debugger.connectRobot')
-        }
-      },
-
-      bleDidClick () {
-        if (this.ble.connectedPeripheral) {
-          this.showConfirmAlert('Warning', 'Are you sure to disconnect xRobot?', confirm => {
-            if (!confirm) return
-
-            this.ble.connectedPeripheral.disconnect(err => {
-              if (err) {
-                this.showMessage('Failed to disconnect xRobot', 'error')
-              } else {
-                this.ble.connected = false
-                this.ble.connectedPeripheral = null
-                this.ble.characteristics = []
-              }
-            })
-          })
-        } else {
-          this.ui.ble.show = true
-        }
-      },
-
       sendData () {
-        // if (!this.ble.connectedPeripheral) {
-        //   this.showMessage('Please connect xRobot first!', 'error')
-        //   return
-        // }
+        if (!this.$store.state.ble.connected) {
+          this.showMessage('Please connect xRobot first!', 'error')
+          return
+        }
 
         let notSelected = this.servos.filter(x => !x.selected)
         if (notSelected.length === this.servos.length) {
@@ -302,17 +170,23 @@
           )
           cmd = cmd.concat(frame)
         }
-        console.log(cmd)
+        cmd = binutil.buildFrame(binutil.FrameCmdUBT, cmd)
+        this.$store.commit(types.LOG_ADD_ENTRY, binutil.toHexString(cmd))
+        this.$store.commit(types.BLE_SEND_DATA, cmd)
       },
 
       turnOnLED (servo) {
         let cmd = ubtLEDOn(servo.index + 1)
-        console.log(cmd)
+        cmd = binutil.buildFrame(binutil.FrameCmdUBT, cmd)
+        this.$store.commit(types.LOG_ADD_ENTRY, binutil.toHexString(cmd))
+        this.$store.commit(types.BLE_SEND_DATA, cmd)
       },
 
       turnOffLED (servo) {
         let cmd = ubtLEDOff(servo.index + 1)
-        console.log(cmd)
+        cmd = binutil.buildFrame(binutil.FrameCmdUBT, cmd)
+        this.$store.commit(types.LOG_ADD_ENTRY, binutil.toHexString(cmd))
+        this.$store.commit(types.BLE_SEND_DATA, cmd)
       }
     }
   }

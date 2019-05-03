@@ -12,8 +12,8 @@
                     <!-- 单选 -->
                     <v-select 
                       v-if="item.type === 'choice' && !item.hide"
-                      :items="item.choices"
-                      :label="item.label"
+                      :items="item.choices.map(x => { return {text: $t(x.text), value: x.value} })"
+                      :label="$t(item.label)"
                       :required="item.required"
                       v-model="payload[key]"
                     ></v-select>
@@ -21,7 +21,7 @@
                     <!-- bool -->
                     <v-checkbox
                       v-else-if="item.type === 'checkbox' && !item.hide"
-                      :label="item.label"
+                      :label="$t(item.label)"
                       :required="item.required"
                       v-model="payload[key]"
                     ></v-checkbox>
@@ -30,7 +30,7 @@
                     <v-text-field
                       v-else-if="item.type === 'text' && !item.hide"
                       :required="item.required"
-                      :label="item.label"
+                      :label="$t(item.label)"
                       :rules="item.rules"
                       :type="item.textType"
                       v-model="payload[key]"
@@ -55,7 +55,7 @@
                       <v-text-field
                         slot="activator"
                         v-model="payload[key]"
-                        :label="item.label"
+                        :label="$t(item.label)"
                         readonly
                       ></v-text-field>
                       <v-date-picker
@@ -88,7 +88,7 @@
                       <v-text-field
                         slot="activator"
                         v-model="timeValues[key]"
-                        :label="item.label"
+                        :label="$t(item.label)"
                         readonly
                       ></v-text-field>
                       <v-time-picker v-model="timeValues[key]">
@@ -101,8 +101,8 @@
                     <!-- Single select -->
                     <v-select
                       v-else-if="item.type === 'choice' && !item.hide"
-                      :items="item.choices"
-                      :label="item.label"
+                      :items="item.choices.map(x => { return {text: $t(x.text), value: x.value} })"
+                      :label="$t(item.label)"
                       v-model="payload[key]"
                       clearable
                       single-line
@@ -112,7 +112,7 @@
                     <v-select
                       v-else-if="item.type === 'multichoice' && !item.hide"
                       :items="item.choices"
-                      :label="item.label"
+                      :label="$t(item.label)"
                       :hint="item.hint"
                       v-model="payload[key]"
                       multiple

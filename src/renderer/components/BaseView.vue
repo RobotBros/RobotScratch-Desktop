@@ -1,32 +1,16 @@
 <script>
+import * as types from '@/store/types'
 
 export default {
+
   data () {
     return {
-      snackbar: { // 弹出框
-        show: false,
-        color: '',
-        text: '',
-        timeout: 3000
-      },
       genericDialog: {
         show: false,
         title: '',
         maxWidth: '400px',
         fields: {},
         userInfo: null
-      },
-      alert: {
-        show: false,
-        title: null,
-        body: null,
-        alertAction: null,
-        callback: (confirm) => {
-          this.alert.show = false
-          if (this.alert.alertAction) {
-            this.alert.alertAction(confirm)
-          }
-        }
       }
     }
   },
@@ -40,10 +24,7 @@ export default {
      * @param {Integer} duration The message shown duration
      */
     showMessage (message, color = '', duration = 3000) {
-      this.snackbar.text = message
-      this.snackbar.color = color
-      this.snackbar.timeout = duration
-      this.snackbar.show = true
+      this.$store.dispatch(types.SHOW_SNACK, message, color, duration)
     },
 
     /**
@@ -158,10 +139,7 @@ export default {
      * The `callback` prototype is callback(confirm: Bool)
      */
     showConfirmAlert (title, body, callback) {
-      this.alert.title = title
-      this.alert.body = body
-      this.alert.alertAction = callback
-      this.alert.show = true
+      this.$store.commit(types.SHOW_ALERT, title, body, callback)
     }
   }
 }

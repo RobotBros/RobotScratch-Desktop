@@ -1,26 +1,36 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import noble from 'noble'
-import underscore from 'underscore'
 import * as types from '@/store/types'
 
 Vue.use(Vuex)
 
 const MAX_ENTRIES_NUM = 50
 const SCAN_INTERVAL = 10000
-const SERVICE_UUIDS = ['00ff']
+const SERVICE_UUIDS = ['ff']
 let scanTimer = null
 
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
+    snackbar: { // 弹出框
+      show: false,
+      color: '',
+      text: '',
+      timeout: 3000
+    },
+    alert: {
+      show: false,
+      title: null,
+      body: null,
+      alertAction: null
+    },
     logs: [],
     ble: {
       scanning: false,
       state: 'unknown',
-      foundDevices: [],
-      connected: false,
-      connectedPeripheral: null
+      dataToSend: null,
+      connected: false
     }
   },
   mutations: {
@@ -39,18 +49,9 @@ const store = new Vuex.Store({
       state.ble.connected = connected
     },
 
-    [types.BLE_CLEAR_DEVICES]: (state) => {
-      state.ble.foundDevices.length = 0
-    },
-
-    // change found device list
-    [types.BLE_FOUND_DEVICE]: (state, peripheral) => {
-      let index = underscore.find(state.ble.foundDevices, x => x.id === peripheral.id)
-      if (index === undefined) {
-        state.ble.foundDevices.push(peripheral)
-      } else {
-        state.ble.foundDevices[index] = peripheral
-      }
+    // send data to ble
+    [types.BLE_SEND_DATA]: (state, data) => {
+      state.ble.dataToSend = data
     },
 
     // log add entry
@@ -59,6 +60,34 @@ const store = new Vuex.Store({
       state.logs.push(entry)
       if (state.logs.length > MAX_ENTRIES_NUM) {
         state.logs = state.logs.slice(1)
+      }
+    },
+
+    // show snackbar
+    [types.SHOW_SNACK]: (state, alert, color = '') => {
+      state.snackbar.text = alert
+      state.snackbar.color = color
+      state.snackbar.show = true
+    },
+
+    // hide snackbar
+    [types.HIDE_SNACK]: (state) => {
+      state.snackbar.show = false
+    },
+
+    // show alert dialog
+    [types.SHOW_ALERT]: (state, title, body, actionCb) => {
+      state.alert.title = title
+      state.alert.body = body
+      state.alert.alertAction = actionCb
+      state.alert.show = true
+    },
+
+    // hide alert dialg
+    [types.HIDE_ALERT]: (state) => {
+      state.alert.show = false
+      if (state.alert.alertAction) {
+        state.alert.alertAction(confirm)
       }
     }
   },
@@ -78,24 +107,20 @@ const store = new Vuex.Store({
         context.commit(types.BLE_SET_SCANNING, false)
       })
 
-      noble.on('discover', (peripheral) => {
-        context.commit(types.BLE_FOUND_DEVICE, peripheral)
-      })
-
       noble.on('warning', (message) => {
         context.commit(types.LOG_ADD_ENTRY, `Bluetooth warning: ${message}`)
       })
 
       noble.on('disconnect', (peripheralUUID) => {
+        context.commit(types.LOG_ADD_ENTRY, 'BLE Disconnected')
         context.commit(types.BLE_SET_CONNECTED, false)
       })
     },
 
     // Start ble scan
     [types.BLE_START_SCAN]: (context) => {
-      context.commit(types.BLE_CLEAR_DEVICES)
       context.commit(types.LOG_ADD_ENTRY, 'Start scanning...')
-      noble.startScanning(SERVICE_UUIDS, true)
+      noble.startScanning(SERVICE_UUIDS, false)
       scanTimer = setTimeout(() => {
         context.dispatch(types.BLE_STOP_SCAN)
       }, SCAN_INTERVAL)
@@ -109,6 +134,13 @@ const store = new Vuex.Store({
       }
       context.commit(types.LOG_ADD_ENTRY, 'Stop scan')
       noble.stopScanning()
+    },
+
+    [types.SHOW_SNACK]: (context, alert, color = '', duration = 3000) => {
+      context.commit(types.SHOW_SNACK, alert, color)
+      setTimeout(() => {
+        context.commit(types.HIDE_SNACK)
+      }, duration)
     }
   }
 })

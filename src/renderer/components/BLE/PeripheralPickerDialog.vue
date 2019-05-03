@@ -52,6 +52,8 @@
 
 <script>
   import * as types from '@/store/types'
+  import underscore from 'underscore'
+  import noble from 'noble'
 
   export default {
     props: {
@@ -132,6 +134,7 @@
       },
 
       selectPeripheral (peripheral) {
+        this.$store.dispatch(types.BLE_STOP_SCAN)
         this.$emit('close', {peripheral: peripheral})
       },
 
@@ -156,6 +159,13 @@
     },
 
     mounted () {
+      noble.on('discover', (peripheral) => {
+        let index = underscore.find(this.items, x => x.id === peripheral.id)
+        if (index === undefined) {
+          this.$emit('discover', { peripheral })
+        }
+      })
+
       this.$store.dispatch(types.BLE_INIT)
     }
   }

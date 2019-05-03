@@ -33,12 +33,6 @@
             </v-btn>
             <span>{{ $t('designer.download') }}</span>
           </v-tooltip>
-          <v-tooltip bottom>
-            <v-btn slot="activator" icon @click="bleDidClick">
-              <v-icon>{{ bleIcon() }}</v-icon>
-            </v-btn>
-            <span>{{ bleTip() }}</span>
-          </v-tooltip>
         </v-toolbar>
       </v-flex>
     </v-layout>
@@ -82,14 +76,6 @@
       </v-flex>
     </v-layout>
 
-    <peripheral-picker-dialog
-      :title="$t('designer.selectRobot')"
-      :show="ui.ble.show"
-      :items="ble.peripherals"
-      @close="closePeripheralDialog"
-      @discover="discover"
-    />
-
     <generic-dialog
       :cancel="$t('constants.cancel')"
       :confirm="$t('constants.confirm')"
@@ -102,40 +88,13 @@
       @cancel="genericDialog.show = false"
       @confirm="dialogSave"
     ></generic-dialog>
-
-    <v-snackbar
-      top
-      :color="snackbar.color"
-      :timeout="snackbar.timeout"
-      v-model="snackbar.show"
-    >
-      {{ snackbar.text }}
-      <v-spacer></v-spacer>
-      <v-btn flat small @click.native="snackbar.show = false">CLOSE</v-btn>
-    </v-snackbar>
-
-    <!-- Modal dialog -->
-    <template>
-      <v-layout row justify-center>
-        <v-dialog v-model="alert.show" persistent max-width="400">
-          <v-card>
-            <v-card-title class="headline">{{ alert.title }}</v-card-title>
-            <v-card-text>{{ alert.body }}</v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="red darken-1" flat @click.native="alert.callback(false)">{{ $t('constants.cancel') }}</v-btn>
-              <v-btn color="green darken-1" flat @click.native="alert.callback(true)">{{ $t('constants.confirm') }}</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-layout>
-    </template>
   </v-container>
 </template>
 
 <script>
-  import PeripheralPickerDialog from './BLE/PeripheralPickerDialog'
   import GenericDialog from './GenericDialog'
+  import * as binutil from '@/utils/binutil'
+  import * as types from '@/store/types'
   import draggable from 'vuedraggable'
   import BaseView from './BaseView'
   import fs from 'fs'
@@ -152,22 +111,13 @@
 
     components: {
       GenericDialog,
-      PeripheralPickerDialog,
       draggable
     },
 
     data () {
       return {
-        ble: {
-          connected: false,
-          connectedPeripheral: null,
-          characteristics: [],
-          peripherals: []
-        },
-
         validators: [
           (payload) => {
-            console.log(this)
             if (payload.cmd === 1) {
               // Rotate
               if (!payload.time) {
@@ -210,10 +160,7 @@
         compileBuffer: null,
 
         ui: {
-          compiling: false,
-          ble: {
-            show: false
-          }
+          compiling: false
         },
 
         saveFields: {
@@ -221,7 +168,7 @@
             type: 'text',
             value: null,
             textType: 'text',
-            label: this.$t('designer.saveName'),
+            label: 'designer.saveName',
             required: true
           }
         },
@@ -229,20 +176,20 @@
           cmd: {
             type: 'choice',
             choices: [
-              { text: this.$t('designer.rotate'), value: 1 },
-              { text: this.$t('designer.sleep'), value: 2 },
-              { text: this.$t('designer.goto'), value: 3 }
+              { text: 'designer.rotate', value: 1 },
+              { text: 'designer.sleep', value: 2 },
+              { text: 'designer.goto', value: 3 }
             ],
             value: null,
             textType: 'number',
-            label: this.$t('designer.command'),
+            label: 'designer.command',
             required: true
           },
           value: {
             type: 'text',
             value: null,
             textType: 'number',
-            label: this.$t('designer.value'),
+            label: 'designer.value',
             required: true,
             rules: [
               v => !!v || 'Value field should not be null'
@@ -252,7 +199,7 @@
             type: 'text',
             value: null,
             textType: 'number',
-            label: this.$t('designer.time'),
+            label: 'designer.time',
             required: false
           }
         },
@@ -364,10 +311,10 @@
           // fileName is a string that contains the path and filename created in the save file dialog.
           fs.writeFile(fileName, content, (err) => {
             if (err) {
-              alert('An error ocurred creating the file ' + err.message)
+              this.showError('An error ocurred creating the file ' + err.message)
             }
 
-            alert('The file has been succesfully saved')
+            this.showInfo('The file has been succesfully saved')
           })
         })
       },
@@ -426,111 +373,26 @@
         }
 
         indexes = indexes.concat(data)
-        let arr = new Uint8Array(indexes)
   
         this.ui.compiling = false
-        console.log('compile success')
-        this.showMessage('编译成功', 'success')
+        this.$store.commit(types.LOG_ADD_ENTRY, 'Compile success')
+        this.showMessage('Compile success', 'success')
 
-        this.compileBuffer = arr
-      },
-
-      closePeripheralDialog (e) {
-        this.ui.ble.show = false
-        if (e.peripheral) {
-          this.connectPeripheral(e.peripheral)
-        }
-      },
-
-      connectPeripheral (peripheral) {
-        peripheral.connect((err) => {
-          if (err) {
-            console.error(err)
-            this.showMessage('Failed to connect peripheral', 'error')
-            this.ble.connected = false
-            this.ble.connectedPeripheral = null
-            return
-          }
-
-          peripheral.discoverAllServicesAndCharacteristics((err, services, characteristics) => {
-            if (err) {
-              console.error(err)
-              this.showMessage('Failed to connect peripheral', 'error')
-              this.ble.connected = false
-              this.ble.connectedPeripheral = null
-              this.ble.characteristics = []
-            } else {
-              this.ble.connected = true
-              this.ble.connectedPeripheral = peripheral
-              this.ble.characteristics = characteristics
-              console.log('Peripheral connected')
-            }
-          })
-        })
-      },
-
-      discover (e) {
-        let peripheral = e.peripheral
-        this.ble.peripherals.push(peripheral)
+        this.compileBuffer = binutil.buildFrame(binutil.FrameCmdSetDMA, indexes)
       },
 
       sendActions () {
-        if (this.ble.connectedPeripheral) {
+        if (this.$store.state.ble.connected) {
           // Send data to ble
           if (this.compileBuffer === null || this.compileBuffer.length === 0) {
-            this.showMessage('Please compile the action first!', 'error')
+            this.showError('Please compile the action first!')
             return
           }
 
-          let charac = this.ble.characteristics[0]
-          let buffer = Buffer.from(this.compileBuffer.buffer)
-          console.log(buffer)
-          charac.write(buffer, true, (error) => {
-            if (error) {
-              console.error(error)
-              this.showMessage('Failed to send data to xRobot', 'error')
-            } else {
-              this.showMessage('Action file has sent to xRobot', 'success')
-            }
-          })
+          this.$store.commit(types.LOG_ADD_ENTRY, this.compileBuffer)
+          this.$store.commit(types.BLE_SEND_DATA, this.compileBuffer)
         } else {
-          this.showMessage('Connect xRobot BLE first!', 'error')
-        }
-      },
-
-      bleIcon () {
-        if (!this.ble.connected) {
-          return 'bluetooth'
-        } else {
-          return 'bluetooth_connected'
-        }
-      },
-
-      bleTip () {
-        if (this.ble.connected) {
-          return this.$t('designer.bleDisconnect')
-        } else {
-          return this.$t('designer.scanBle')
-        }
-      },
-
-      bleDidClick () {
-        if (this.ble.connectedPeripheral) {
-          this.showConfirmAlert('Warning', 'Are you sure to disconnect xRobot?', confirm => {
-            if (!confirm) return
-
-            this.ble.connectedPeripheral.disconnect(err => {
-              if (err) {
-                this.showMessage('Failed to disconnect xRobot', 'error')
-              } else {
-                this.ble.connected = false
-                this.ble.connectedPeripheral = null
-                this.ble.characteristics = []
-              }
-            })
-          })
-        } else {
-          this.ui.ble.show = true
+          this.showError('Connect xRobot BLE first!')
         }
       },
 

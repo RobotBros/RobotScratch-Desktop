@@ -10,7 +10,8 @@ export default {
   },
   app: {
     langEN: '英文 en',
-    langZhCN: '简体中文 zh-CN'
+    langZhCN: '简体中文 zh-CN',
+    log: 'INFO'
   },
   welcome: {
     servoDebugger: '舵机调试',
@@ -22,7 +23,9 @@ export default {
     selectServoFirst: '请先选择舵机',
     targetDegree: '目标角度 (n˚)',
     duration: '运行时间 (ms)',
-    connectRobot: '连接xRobot'
+    connectRobot: '连接xRobot',
+    bleNotConnect: 'Bluetooth not connect',
+    bleConnected: 'Bluetooth connected: %{name}'
   },
   designer: {
     add: '添加动作',

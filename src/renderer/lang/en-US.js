@@ -10,7 +10,8 @@ export default {
   },
   app: {
     langEN: 'English en-GB',
-    langZhCN: 'Simple-Chinese zh-CN'
+    langZhCN: 'Simple-Chinese zh-CN',
+    log: 'INFO'
   },
   welcome: {
     servoDebugger: 'Servo debugger',
@@ -22,7 +23,9 @@ export default {
     selectServoFirst: 'Please select a servo first',
     targetDegree: 'Target degree (n˚)',
     duration: 'Duration (ms)',
-    connectRobot: 'Connect xRobot'
+    connectRobot: 'Connect xRobot',
+    bleNotConnect: 'Bluetooth not connect',
+    bleConnected: 'Bluetooth connected: %{name}'
   },
   designer: {
     add: 'Add action',
