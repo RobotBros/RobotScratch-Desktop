@@ -1,3 +1,25 @@
+<i18n>
+{
+  "en": {
+    "selectServoFirst": "Please select a servo first",
+    "targetDegree": "Target degree (n˚)",
+    "duration": "Duration (ms)",
+    "connectRobot": "Connect xRobot",
+    "bleNotConnect": "Bluetooth not connect",
+    "bleConnected": "Bluetooth connected: %{name}",
+    "send": "Send"
+  },
+  "zh-CN": {
+    "selectServoFirst": "请先选择舵机",
+    "targetDegree": "目标角度 (n˚)",
+    "duration": "运行时间 (ms)",
+    "connectRobot": "连接xRobot",
+    "bleNotConnect": "Bluetooth not connect",
+    "bleConnected": "Bluetooth connected: %{name}",
+    "send": "发送"
+  }
+}
+</i18n>
 <template>
   <v-container grid-list-md fluid class="pa-0 ma-0">
     <!-- Toolbar -->
@@ -9,7 +31,7 @@
             <v-btn slot="activator" icon @click="sendData">
               <v-icon>send</v-icon>
             </v-btn>
-            <span>{{ $t('action.send') }}</span>
+            <span>{{ $t('send') }}</span>
           </v-tooltip>
           
         </v-toolbar>
@@ -65,7 +87,7 @@
               append-icon="˚"
               type="number"
               v-model="servo.props.degree"
-              :label="$t('debugger.targetDegree')"
+              :label="$t('targetDegree')"
             />
 
             <v-text-field
@@ -75,8 +97,18 @@
               append-icon="''"
               type="number"
               v-model="servo.props.duration"
-              :label="$t('debugger.duration')"
+              :label="$t('duration')"
             />
+
+            <v-slider
+              prepend-icon="rotate_right"
+              :min="servo.min"
+              :max="servo.max"
+              :color="servo.color"
+              v-model="servo.props.degree"
+              @change="sendData"
+              @start="servo.selected = true"
+            ></v-slider>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -112,22 +144,22 @@
         ],
 
         servos: [
-          { index: 0, title: 'SERVO #1', selected: false, color: 'deep-purple', props: { degree: null, duration: null } },
-          { index: 1, title: 'SERVO #2', selected: false, color: 'indigo', props: { degree: null, duration: null } },
-          { index: 2, title: 'SERVO #3', selected: false, color: 'blue', props: { degree: null, duration: null } },
-          { index: 3, title: 'SERVO #4', selected: false, color: 'light-blue', props: { degree: null, duration: null } },
-          { index: 4, title: 'SERVO #5', selected: false, color: 'cyan', props: { degree: null, duration: null } },
-          { index: 5, title: 'SERVO #6', selected: false, color: 'teal', props: { degree: null, duration: null } },
-          { index: 6, title: 'SERVO #7', selected: false, color: 'green', props: { degree: null, duration: null } },
-          { index: 7, title: 'SERVO #8', selected: false, color: 'light-green', props: { degree: null, duration: null } },
-          { index: 8, title: 'SERVO #9', selected: false, color: 'lime', props: { degree: null, duration: null } },
-          { index: 9, title: 'SERVO #10', selected: false, color: 'amber', props: { degree: null, duration: null } },
-          { index: 10, title: 'SERVO #11', selected: false, color: 'orange', props: { degree: null, duration: null } },
-          { index: 11, title: 'SERVO #12', selected: false, color: 'deep-orange', props: { degree: null, duration: null } },
-          { index: 12, title: 'SERVO #13', selected: false, color: 'red', props: { degree: null, duration: null } },
-          { index: 13, title: 'SERVO #14', selected: false, color: 'pink', props: { degree: null, duration: null } },
-          { index: 14, title: 'SERVO #15', selected: false, color: 'purple', props: { degree: null, duration: null } },
-          { index: 15, title: 'SERVO #16', selected: false, color: 'brown', props: { degree: null, duration: null } }
+          { index: 0, title: 'SERVO #1', min: 0, max: 360, selected: false, color: 'deep-purple', props: { degree: null, duration: null } },
+          { index: 1, title: 'SERVO #2', min: 0, max: 360, selected: false, color: 'indigo', props: { degree: null, duration: null } },
+          { index: 2, title: 'SERVO #3', min: 0, max: 360, selected: false, color: 'blue', props: { degree: null, duration: null } },
+          { index: 3, title: 'SERVO #4', min: 0, max: 360, selected: false, color: 'light-blue', props: { degree: null, duration: null } },
+          { index: 4, title: 'SERVO #5', min: 0, max: 360, selected: false, color: 'cyan', props: { degree: null, duration: null } },
+          { index: 5, title: 'SERVO #6', min: 0, max: 360, selected: false, color: 'teal', props: { degree: null, duration: null } },
+          { index: 6, title: 'SERVO #7', min: 0, max: 360, selected: false, color: 'green', props: { degree: null, duration: null } },
+          { index: 7, title: 'SERVO #8', min: 0, max: 360, selected: false, color: 'light-green', props: { degree: null, duration: null } },
+          { index: 8, title: 'SERVO #9', min: 0, max: 360, selected: false, color: 'lime', props: { degree: null, duration: null } },
+          { index: 9, title: 'SERVO #10', min: 0, max: 360, selected: false, color: 'amber', props: { degree: null, duration: null } },
+          { index: 10, title: 'SERVO #11', min: 0, max: 360, selected: false, color: 'orange', props: { degree: null, duration: null } },
+          { index: 11, title: 'SERVO #12', min: 0, max: 360, selected: false, color: 'deep-orange', props: { degree: null, duration: null } },
+          { index: 12, title: 'SERVO #13', min: 0, max: 360, selected: false, color: 'red', props: { degree: null, duration: null } },
+          { index: 13, title: 'SERVO #14', min: 0, max: 360, selected: false, color: 'pink', props: { degree: null, duration: null } },
+          { index: 14, title: 'SERVO #15', min: 0, max: 360, selected: false, color: 'purple', props: { degree: null, duration: null } },
+          { index: 15, title: 'SERVO #16', min: 0, max: 360, selected: false, color: 'brown', props: { degree: null, duration: null } }
         ]
       }
     },
@@ -156,7 +188,7 @@
 
         let notSelected = this.servos.filter(x => !x.selected)
         if (notSelected.length === this.servos.length) {
-          this.showMessage(this.$t('debugger.selectServoFirst'), 'error')
+          this.showMessage(this.$t('selectServoFirst'), 'error')
           return
         }
 
@@ -187,6 +219,10 @@
         cmd = binutil.buildFrame(binutil.FrameCmdUBT, cmd)
         this.$store.commit(types.LOG_ADD_ENTRY, binutil.toHexString(cmd))
         this.$store.commit(types.BLE_SEND_DATA, cmd)
+      },
+
+      changeDegree (e) {
+        this.sendData()
       }
     }
   }

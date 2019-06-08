@@ -1,3 +1,80 @@
+<i18n>
+{
+  "en": {
+    "add": "Add action",
+    "save": "Save file",
+    "open": "Open file...",
+    "compile": "Compile",
+    "download": "Flash actions",
+    "scanBle": "Scan xRobot",
+    "bleDisconnect": "Disconnect",
+    "selectRobot": "Select a xRobot",
+    "saveName": "Save name",
+    "rotate": "1 - Rotate",
+    "sleep": "2 - Sleep",
+    "goto": "3 - Goto",
+    "command": "Command",
+    "value": "Value",
+    "time": "Time",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirm": "OK",
+    "timeRequire": "Time could not be empty",
+    "timeInt": "Time should be integer",
+    "timeRange": "Time should be in range [0, 65535]",
+    "rotatePositive": "Rotate value should be positive integer",
+    "rotaterange": "Rotate value should be in range [0, 360]",
+    "sleepint": "Sleep time value (ms) should be positive integer",
+    "sleeprange": "Sleep time value (ms) should be in range (0, 65535]",
+    "valuenull": "Value field should not be null",
+    "fileerror": "An error ocurred creating the file %{err}",
+    "saveok": "The file has been succesfully saved",
+    "readfailed": "An error ocurred reading the file: %{err}",
+    "compileok": "Compile success",
+    "compilefirst": "Please compile the action first!",
+    "connectfirst": "Connect xRobot BLE first!",
+    "addaction": "Add action",
+    "saveaction": "Save action"
+  },
+  "zh-CN": {
+    "add": "添加动作",
+    "save": "保存文件",
+    "open": "打开文件",
+    "compile": "编译动作",
+    "download": "下载动作",
+    "scanBle": "扫描蓝牙",
+    "bleDisconnect": "断开蓝牙",
+    "selectRobot": "选择xRobot",
+    "saveName": "保存的名称",
+    "rotate": "1 - 转动",
+    "sleep": "2 - 等待",
+    "goto": "3 - 跳转",
+    "command": "指令",
+    "value": "指令值",
+    "time": "时间",
+    "edit": "修改动作",
+    "cancel": "取消",
+    "confirm": "确定",
+    "timeRequire": "时间不能为空",
+    "timeInt": "时间必须为整数",
+    "timeRange": "时间范围必须为[0, 65535]",
+    "rotatePositive": "转动角度必须为正数",
+    "rotaterange": "转动角度范围必须为[0, 360]",
+    "sleepint": "暂停时间必须为正数",
+    "sleeprange": "暂停时间必须在[0, 65535]",
+    "valuenull": "字段不能为空",
+    "fileerror": "创建文件失败: %{err}",
+    "saveok": "保存成功",
+    "readfailed": "读取文件失败: %{err}",
+    "compileok": "编译成功",
+    "compilefirst": "请先编译该文件!",
+    "connectfirst": "请先连接xRobot!",
+    "addaction": "添加动作",
+    "saveaction": "保存动作"
+  }
+}
+</i18n>
+
 <template>
   <v-container fluid class="pa-0 ma-0">
     <v-layout row>
@@ -7,31 +84,31 @@
             <v-btn slot="activator" icon @click="showAddAction">
               <v-icon>add</v-icon>
             </v-btn>
-            <span>{{ $t('designer.add') }}</span>
+            <span>{{ $t('add') }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn slot="activator" icon @click="saveActions">
               <v-icon>save</v-icon>
             </v-btn>
-            <span>{{ $t('designer.save') }}</span>
+            <span>{{ $t('save') }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn slot="activator" icon @click="loadActions">
               <v-icon>folder_special</v-icon>
             </v-btn>
-            <span>{{ $t('designer.open') }}</span>
+            <span>{{ $t('open') }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn slot="activator" :loading="ui.compiling" icon @click="compile">
               <v-icon>build</v-icon>
             </v-btn>
-            <span>{{ $t('designer.compile') }}</span>
+            <span>{{ $t('compile') }}</span>
           </v-tooltip>
           <v-tooltip bottom>
             <v-btn slot="activator" :loading="ui.compiling" icon @click="sendActions">
               <v-icon>vertical_align_bottom</v-icon>
             </v-btn>
-            <span>{{ $t('designer.download') }}</span>
+            <span>{{ $t('download') }}</span>
           </v-tooltip>
         </v-toolbar>
       </v-flex>
@@ -77,8 +154,8 @@
     </v-layout>
 
     <generic-dialog
-      :cancel="$t('constants.cancel')"
-      :confirm="$t('constants.confirm')"
+      :cancel="$t('cancel')"
+      :confirm="$t('confirm')"
       :show="genericDialog.show"
       :title="genericDialog.title"
       :fields="genericDialog.fields"
@@ -114,6 +191,42 @@
       draggable
     },
 
+    computed: {
+      createFields () {
+        return {
+          cmd: {
+            type: 'choice',
+            choices: [
+              { text: this.$t('rotate'), value: 1 },
+              { text: this.$t('sleep'), value: 2 },
+              { text: this.$t('goto'), value: 3 }
+            ],
+            value: null,
+            textType: 'number',
+            label: this.$t('command'),
+            required: true
+          },
+          value: {
+            type: 'text',
+            value: null,
+            textType: 'number',
+            label: this.$t('value'),
+            required: true,
+            rules: [
+              v => !!v || this.$t('valuenull')
+            ]
+          },
+          time: {
+            type: 'text',
+            value: null,
+            textType: 'number',
+            label: this.$t('time'),
+            required: false
+          }
+        }
+      }
+    },
+
     data () {
       return {
         validators: [
@@ -121,32 +234,32 @@
             if (payload.cmd === 1) {
               // Rotate
               if (!payload.time) {
-                return 'Time could not be empty'
+                return this.$t('timeRequire')
               }
 
               if (!/^\d+$/.test(payload.time)) {
-                return 'Time should be integer'
+                return this.$t('timeInt')
               }
 
               if (parseInt(payload.time) <= 0 || parseInt(payload.time) > 65535) {
-                return 'Time should be in range [0, 65535]'
+                return this.$t('timeRange')
               }
 
               if (!/^\d+$/.test(payload.value)) {
-                return 'Rotate value should be positive integer'
+                return this.$t('rotatePositive')
               }
 
               if (parseInt(payload.value) > 360 || parseInt(payload.value) < 0) {
-                return 'Rotate value should be in range [0, 360]'
+                return this.$t('rotaterange')
               }
             } else if (payload.cmd === 2) {
               // Sleep
               if (!/^\d+$/.test(payload.value)) {
-                return 'Sleep time value (ms) should be positive integer'
+                return this.$t('')
               }
 
               if (parseInt(payload.value) > 65535 || parseInt(payload.value) <= 0) {
-                return 'Sleep time value (ms) should be in range (0, 65535]'
+                return this.$t('sleeprange')
               }
             } else if (payload.cmd === 3) {
               // Goto
@@ -168,39 +281,8 @@
             type: 'text',
             value: null,
             textType: 'text',
-            label: 'designer.saveName',
+            label: 'saveName',
             required: true
-          }
-        },
-        createFields: {
-          cmd: {
-            type: 'choice',
-            choices: [
-              { text: 'designer.rotate', value: 1 },
-              { text: 'designer.sleep', value: 2 },
-              { text: 'designer.goto', value: 3 }
-            ],
-            value: null,
-            textType: 'number',
-            label: 'designer.command',
-            required: true
-          },
-          value: {
-            type: 'text',
-            value: null,
-            textType: 'number',
-            label: 'designer.value',
-            required: true,
-            rules: [
-              v => !!v || 'Value field should not be null'
-            ]
-          },
-          time: {
-            type: 'text',
-            value: null,
-            textType: 'number',
-            label: 'designer.time',
-            required: false
           }
         },
         selected: 0,
@@ -271,11 +353,11 @@
       },
 
       showAddAction () {
-        this.showGenericDialog(this.createFields, { action: 'add' }, 'Add Action')
+        this.showGenericDialog(this.createFields, { action: 'add' }, this.$t('addaction'))
       },
 
       showSaveDialog () {
-        this.showGenericDialog(this.saveFields, { action: 'save' }, 'Save action')
+        this.showGenericDialog(this.saveFields, { action: 'save' }, this.$t('saveaction'))
       },
 
       dialogSave (res) {
@@ -311,10 +393,10 @@
           // fileName is a string that contains the path and filename created in the save file dialog.
           fs.writeFile(fileName, content, (err) => {
             if (err) {
-              this.showError('An error ocurred creating the file ' + err.message)
+              this.showError(this.$t('fileerror', {err: err.message}))
             }
 
-            this.showInfo('The file has been succesfully saved')
+            this.showInfo(this.$t('saveok'))
           })
         })
       },
@@ -331,7 +413,7 @@
 
           fs.readFile(filepath, 'utf-8', (err, data) => {
             if (err) {
-              let msg = 'An error ocurred reading the file :' + err.message
+              let msg = this.$t('readfailed', {err: err.message})
               this.showMessage(msg, 'error')
               return
             }
@@ -375,8 +457,8 @@
         indexes = indexes.concat(data)
   
         this.ui.compiling = false
-        this.$store.commit(types.LOG_ADD_ENTRY, 'Compile success')
-        this.showMessage('Compile success', 'success')
+        this.$store.commit(types.LOG_ADD_ENTRY, this.$t('compileok'))
+        this.showMessage(this.$t('compileok'), 'success')
 
         this.compileBuffer = binutil.buildFrame(binutil.FrameCmdSetDMA, indexes)
       },
@@ -385,14 +467,14 @@
         if (this.$store.state.ble.connected) {
           // Send data to ble
           if (this.compileBuffer === null || this.compileBuffer.length === 0) {
-            this.showError('Please compile the action first!')
+            this.showError(this.$t('compilefirst'))
             return
           }
 
           this.$store.commit(types.LOG_ADD_ENTRY, this.compileBuffer)
           this.$store.commit(types.BLE_SEND_DATA, this.compileBuffer)
         } else {
-          this.showError('Connect xRobot BLE first!')
+          this.showError(this.$t('connectfirst'))
         }
       },
 
@@ -400,7 +482,7 @@
         this.createFields.cmd.value = action.cmd
         this.createFields.value.value = action.value
         this.createFields.time.value = action.time
-        this.showGenericDialog(this.createFields, { action: 'edit', item: action }, this.$t('designer.edit'))
+        this.showGenericDialog(this.createFields, { action: 'edit', item: action }, this.$t('edit'))
       }
     }
   }

@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 const MAX_ENTRIES_NUM = 50
 const SCAN_INTERVAL = 10000
-const SERVICE_UUIDS = ['ff']
+const SERVICE_UUIDS = ['00FF']
 let scanTimer = null
 
 const store = new Vuex.Store({

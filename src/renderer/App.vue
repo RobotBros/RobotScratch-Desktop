@@ -1,3 +1,40 @@
+<i18n>
+{
+  "zh-CN": {
+    "selectRobot": "选择xRobot",
+    "cancel": "取消",
+    "confirm": "确定",
+    "langEN": "英文 en-US",
+    "langZhCN": "简体中文 zh-CN",
+    "log": "控制台",
+    "bleDisconnect": "断开蓝牙连接",
+    "connectRobot": "连接xRobot",
+    "bleNotConnect": "未连接xRobot",
+    "bleConnected": "已连接xRobot: %{name}",
+    "connectFailed": "连接xRobot失败",
+    "promptDisconnect": "是否确定断开连接?",
+    "warning": "警告",
+    "disconnectFailed": "断开xRobot连接失败"
+  },
+  "en": {
+    "selectRobot": "Select xRobot",
+    "cancel": "Cancel",
+    "confirm": "OK",
+    "langEN": "English en-US",
+    "langZhCN": "简体中文 zh-CN",
+    "log": "CONSOLE",
+    "bleDisconnect": "Disconnect",
+    "connectRobot": "Connect xRobot",
+    "bleNotConnect": "No connection to xRobot",
+    "bleConnected": "xRobot connected: %{name}",
+    "connectFailed": "Failed to connect xRobot",
+    "promptDisconnect": "Are you sure to disconnect xRobot?",
+    "warning": "Warning",
+    "disconnectFailed": "Failed to disconnect xRobot"
+  }
+}
+</i18n>
+
 <template>
   <div id="app">
     <v-app dark>
@@ -63,7 +100,7 @@
         <v-container fluid class="ma-0 pa-0">
           <!-- select BLE -->
           <peripheral-picker-dialog
-            :title="$t('designer.selectRobot')"
+            :title="$t('selectRobot')"
             :show="ble.show"
             :items="ble.peripherals"
             @close="closePeripheralDialog"
@@ -91,8 +128,8 @@
                   <v-card-text>{{ $store.state.alert.body }}</v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="red darken-1" flat @click.native="hideAlert(false)">{{ $t('constants.cancel') }}</v-btn>
-                    <v-btn color="green darken-1" flat @click.native="hideAlert(true)">{{ $t('constants.confirm') }}</v-btn>
+                    <v-btn color="red darken-1" flat @click.native="hideAlert(false)">{{ $t('cancel') }}</v-btn>
+                    <v-btn color="green darken-1" flat @click.native="hideAlert(true)">{{ $t('confirm') }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -121,7 +158,7 @@
         </v-list>
       </v-navigation-drawer>
       <v-footer :fixed="fixed" app class="blue-grey darken-4">
-        <span class="ml-1">[{{ $t('app.log') }}] {{ logMsg }}</span>
+        <span class="ml-1">[{{ $t('log') }}] {{ logMsg }}</span>
         <v-spacer />
         <span class="mr-1" :class="bleStateColor">{{ bleState }}</span>
       </v-footer>
@@ -131,7 +168,7 @@
 
 <script>
   import PeripheralPickerDialog from '@/components/BLE/PeripheralPickerDialog'
-  import { loadLanguageAsync } from '@/setup/i18n-setup'
+  import { setI18nLanguage } from '@/setup/i18n-setup'
   import underscore from 'underscore'
   import * as types from '@/store/types'
 
@@ -168,8 +205,8 @@
         rightDrawer: false,
         title: 'RobotScratch',
         rightMenus: [
-          { lang: 'zh-CN', title: 'app.langZhCN', action: this.switchLang },
-          { lang: 'en-US', title: 'app.langEN', action: this.switchLang }
+          { lang: 'zh-CN', title: 'langZhCN', action: this.setI18nLanguage },
+          { lang: 'en', title: 'langEN', action: this.setI18nLanguage }
         ]
       }
     },
@@ -185,9 +222,9 @@
 
       bleTip () {
         if (this.$store.state.ble.connected) {
-          return this.$t('designer.bleDisconnect')
+          return this.$t('bleDisconnect')
         } else {
-          return this.$t('debugger.connectRobot')
+          return this.$t('connectRobot')
         }
       },
 
@@ -202,7 +239,7 @@
 
       bleState () {
         if (this.ble.connectedPeripheral === null) {
-          return this.$t('debugger.bleNotConnect')
+          return this.$t('bleNotConnect')
         } else {
           return this.$t(
             'debugger.bleConnected',
@@ -238,12 +275,7 @@
     },
 
     methods: {
-      switchLang (lang) {
-        loadLanguageAsync(lang)
-          .catch(err => {
-            console.error(err)
-          })
-      },
+      setI18nLanguage: setI18nLanguage,
 
       closePeripheralDialog (e) {
         this.ble.show = false
@@ -256,7 +288,7 @@
         peripheral.connect((err) => {
           if (err) {
             this.$store.commit(types.LOG_ADD_ENTRY, err)
-            this.showMessage('Failed to connect peripheral', 'error')
+            this.showMessage(this.$t('connectFailed'), 'error')
             this.ble.connected = false
             this.ble.connectedPeripheral = null
             this.$store.commit(types.BLE_SET_CONNECTED, false)
@@ -266,7 +298,7 @@
           peripheral.discoverAllServicesAndCharacteristics((err, services, characteristics) => {
             if (err) {
               this.$store.commit(types.LOG_ADD_ENTRY, err)
-              this.showMessage('Failed to connect peripheral', 'error')
+              this.showMessage(this.$t('connectFailed'), 'error')
               this.ble.connected = false
               this.ble.connectedPeripheral = null
               this.ble.characteristics = []
@@ -305,12 +337,12 @@
 
       bleDidClick () {
         if (this.ble.connectedPeripheral) {
-          this.$store.commit(types.SHOW_ALERT, 'Warning', 'Are you sure to disconnect xRobot?', confirm => {
+          this.$store.commit(types.SHOW_ALERT, this.$t('warning'), this.$t('promptDisconnect'), confirm => {
             if (!confirm) return
 
             this.ble.connectedPeripheral.disconnect(err => {
               if (err) {
-                this.showMessage('Failed to disconnect xRobot', 'error')
+                this.showMessage(this.$t('disconnectFailed'), 'error')
               } else {
                 this.ble.connected = false
                 this.ble.connectedPeripheral = null

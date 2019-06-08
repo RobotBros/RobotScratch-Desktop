@@ -1,3 +1,18 @@
+<i18n>
+{
+  "en": {
+    "noPeripheralFound": "No robot found",
+    "turnOnBluetooth": "Please turn on your bluetooth",
+    "notSupport": "Bluetooth not found in your machine"
+  },
+  "zh-CN": {
+    "noPeripheralFound": "未搜索到设备",
+    "turnOnBluetooth": "请打开蓝牙",
+    "notSupport": "未找到蓝牙控制器"
+  }
+}
+</i18n>
+
 <template>
   <v-dialog v-model="show" persistent :max-width="maxWidth">
       <v-card>
@@ -87,11 +102,11 @@
       message: function () {
         let state = this.$store.state.ble.state
         if (state === 'poweredOn') {
-          return this.$t('blePicker.noPeripheralFound')
+          return this.$t('noPeripheralFound')
         } else if (state === 'poweredOff') {
-          return this.$t('blePicker.turnOnBluetooth')
+          return this.$t('turnOnBluetooth')
         } else {
-          return this.$t('blePicker.notSupport')
+          return this.$t('notSupport')
         }
       }
     },

@@ -1,17 +1,34 @@
+<i18n>
+{
+  "en": {
+    "servoDebugger": "Servo debugger",
+    "servoSubtitle": "Single step debug for individual servo",
+    "editor": "Motion Editor",
+    "editorSubtitle": "Create your own set of montions"
+  },
+  "zh-CN": {
+    "servoDebugger": "舵机调试",
+    "servoSubtitle": "单个舵机的角度调试",
+    "editor": "动作编辑器",
+    "editorSubtitle": "可视化动作编辑器"
+  }
+}
+</i18n>
+
 <template>
   <v-container grid-list-md fluid>
     <!-- Toolbar -->
     <v-layout wrap row>
       <v-flex xs12 sm6 md3 xl2 v-for="(item, i) in cards" :key="i">
         <v-card class="elevation-5">
-          <v-card-media
+          <v-card
             @click="navigateTo(item)"
             v-if="item.image"
             :src="item.image"
             height="180px"
             class="pointer"
-          ></v-card-media>
-          <v-card-media
+          ></v-card>
+          <v-card
             v-else
             :class="item.image_text_class"
             @click="navigateTo(item)"
@@ -25,7 +42,7 @@
                 </v-flex>
               </v-layout>
             </v-container>
-          </v-card-media>
+          </v-card>
 
           <v-card-title
             class="pointer"
@@ -51,17 +68,17 @@ export default {
     return {
       cards: [
         {
-          'name': 'welcome.servoDebugger',
+          'name': 'servoDebugger',
           'url': 'servoDebugger',
-          'brief': 'welcome.servoSubtitle',
+          'brief': 'servoSubtitle',
           'image': null,
           'image_text': '{ SERVO }',
           'image_text_class': 'blue'
         },
         {
-          'name': 'welcome.editor',
+          'name': 'editor',
           'url': 'designer',
-          'brief': 'welcome.editorSubtitle',
+          'brief': 'editorSubtitle',
           'image': null,
           'image_text': '{ EDITOR }',
           'image_text_class': 'teal'
