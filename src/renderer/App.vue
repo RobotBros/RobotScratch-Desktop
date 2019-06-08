@@ -337,18 +337,22 @@
 
       bleDidClick () {
         if (this.ble.connectedPeripheral) {
-          this.$store.commit(types.SHOW_ALERT, this.$t('warning'), this.$t('promptDisconnect'), confirm => {
-            if (!confirm) return
+          this.$store.commit(types.SHOW_ALERT, {
+            title: this.$t('warning'),
+            body: this.$t('promptDisconnect'),
+            actionCb: confirm => {
+              if (!confirm) return
 
-            this.ble.connectedPeripheral.disconnect(err => {
-              if (err) {
-                this.showMessage(this.$t('disconnectFailed'), 'error')
-              } else {
-                this.ble.connected = false
-                this.ble.connectedPeripheral = null
-                this.ble.characteristics = []
-              }
-            })
+              this.ble.connectedPeripheral.disconnect(err => {
+                if (err) {
+                  this.showMessage(this.$t('disconnectFailed'), 'error')
+                } else {
+                  this.ble.connected = false
+                  this.ble.connectedPeripheral = null
+                  this.ble.characteristics = []
+                }
+              })
+            }
           })
         } else {
           this.ble.peripherals = []

@@ -135,11 +135,11 @@ export default {
      * Show confirm alert dialog
      * @param {String} title The alert title
      * @param {String} body The alert body
-     * @param {Function} callback The callback when action button is tapped
+     * @param {Function} actionCb The callback when action button is tapped
      * The `callback` prototype is callback(confirm: Bool)
      */
-    showConfirmAlert (title, body, callback) {
-      this.$store.commit(types.SHOW_ALERT, title, body, callback)
+    showConfirmAlert (title, body, actionCb) {
+      this.$store.commit(types.SHOW_ALERT, {title, body, actionCb})
     }
   }
 }

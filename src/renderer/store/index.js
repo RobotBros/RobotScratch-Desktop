@@ -76,7 +76,7 @@ const store = new Vuex.Store({
     },
 
     // show alert dialog
-    [types.SHOW_ALERT]: (state, title, body, actionCb) => {
+    [types.SHOW_ALERT]: (state, {title, body, actionCb}) => {
       state.alert.title = title
       state.alert.body = body
       state.alert.alertAction = actionCb
