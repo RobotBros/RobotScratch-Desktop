@@ -242,7 +242,7 @@
           return this.$t('bleNotConnect')
         } else {
           return this.$t(
-            'debugger.bleConnected',
+            'bleConnected',
             {name: underscore.property(['advertisement', 'localName'])(this.ble.connectedPeripheral) || '<no name>'}
           )
         }

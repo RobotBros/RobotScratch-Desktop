@@ -7,7 +7,8 @@
     "connectRobot": "Connect xRobot",
     "bleNotConnect": "Bluetooth not connect",
     "bleConnected": "Bluetooth connected: %{name}",
-    "send": "Send"
+    "send": "Send",
+    "connectfirst": "Please connect xRobot first!"
   },
   "zh-CN": {
     "selectServoFirst": "请先选择舵机",
@@ -16,7 +17,8 @@
     "connectRobot": "连接xRobot",
     "bleNotConnect": "Bluetooth not connect",
     "bleConnected": "Bluetooth connected: %{name}",
-    "send": "发送"
+    "send": "发送",
+    "connectfirst": "请先连接xRobot!"
   }
 }
 </i18n>
@@ -182,7 +184,7 @@
 
       sendData () {
         if (!this.$store.state.ble.connected) {
-          this.showMessage('Please connect xRobot first!', 'error')
+          this.showMessage(this.$t('connectfirst'), 'error')
           return
         }
 
