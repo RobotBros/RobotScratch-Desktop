@@ -1,3 +1,76 @@
+/**
+ * 数据帧转码
+ * 0xFF->0xFD 0x0F
+ * 0xFE->0xFD 0x0E
+ * 0xFD->0xFD 0x0D
+ * @param {Uint8Array} arr 需要转码的数组
+ * @param {Number} from 开始位置
+ * @param {Number} to 结束位置
+ * @return {Uint8Array} 转码后的数组
+ */
+export const escape = function (arr, from, to) {
+  let escaped = []
+  for (let i = from; i < to; i++) {
+    let b = arr[i]
+    if (b === 0xff) {
+      escaped.push(0xfd)
+      escaped.push(0x0f)
+    } else if (b === 0xfe) {
+      escaped.push(0xfd)
+      escaped.push(0x0e)
+    } else if (b === 0xfd) {
+      escaped.push(0xfd)
+      escaped.push(0x0d)
+    } else {
+      escaped.push(b)
+    }
+  }
+  return new Uint8Array(escaped)
+}
+
+/**
+ * 数据帧解码
+ * 0xFF->0xFD 0x0F
+ * 0xFE->0xFD 0x0E
+ * 0xFD->0xFD 0x0D
+ * @param {Uint8Array} arr 需要转码的数组
+ * @param {Number} from 开始位置
+ * @param {Number} to 结束位置
+ * @return {Uint8Array} 转码后的数组
+ */
+export const unescape = function (arr, from, to) {
+  let raw = []
+  let fd = false
+  for (let i = from; i < to; i++) {
+    let b = arr[i]
+    if (b === 0xfd) {
+      fd = true
+    } else if (fd && b === 0x0f) {
+      raw.push(0xff)
+      fd = false
+    } else if (fd && b === 0x0d) {
+      raw.push(0xfd)
+      fd = false
+    } else if (fd && b === 0x0e) {
+      raw.push(0xfe)
+      fd = false
+    } else {
+      if (fd) {
+        raw.push(0xfd)
+      } else {
+        raw.push(b)
+      }
+      fd = false
+    }
+  }
+
+  if (fd) {
+    raw.push(0xfd)
+  }
+
+  return new Uint8Array(raw)
+}
+
 export const calcCheck = (buffer, from, to) => {
   let check = 0
   for (let i = from; i < to; i++) {
@@ -29,10 +102,11 @@ export const buildFrame = (cmd, payload) => {
   // payload
   buf.set(payload, 3)
   // checksum
-  let check = calcCheck(buf, 0, buf.length - 1)
+  let check = calcCheck(buf, 1, buf.length - 1)
   buf.set([check], buf.length - 2)
   // tail
   buf.set([0xFE], buf.length - 1)
+  buf = escape(buf, 1, buf.length - 2)
   return toBuffer(buf.buffer)
 }
 
