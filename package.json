@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.2",
     "chart.js": "^2.8.0",
     "material-design-icons-iconfont": "^4.0.5",
     "noble": "https://github.com/noble/noble#master",
